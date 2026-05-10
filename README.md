@@ -45,7 +45,7 @@ Zamanın parçalı yapısını estetik bir bütünlükle sunan dijital Zellich y
 
 ---
 
-## 🎨 ASCII Signature
+## 
 ```text
         _____       _                                
        / ____|     | |                               
