@@ -8,11 +8,12 @@
   </a>
 </div>
 
-# 📅 Zellich Codex: Dijital Zellich Takvimi (Zellich Calendar Digitalization)
+# 📅 Ottoman Multilingual Calender
 
 Bu çalışma, 19. yüzyıl İstanbul'unun estetik ve kozmopolit mirasını, matbaacılık sanatının öncü ismi **Zellich Ailesi**'nin gözünden dijital dünyaya taşımaktadır.
 
 ---
+![Osmanlı Çok Dilli Takvimi Ön İzleme](assets/takvim.png)
 
 ## 📖 Bir Mirasın Anatomisi: Zellich Ailesi ve 1869'dan Günümüze
 Zellich ailesi, 1840'ta Dalmaçya'dan İstanbul'a yerleşerek Osmanlı İmparatorluğu'nda grafik sanatlarının öncüsü olmuştur. Antonio Zellich tarafından **1869** yılında kurulan **"A. Zellich Fils"** matbaası, bugün koleksiyonerlerin nadide parçalarından olan "saatli maarif" tarzı çok dilli takvimlerin mimarıdır. 
