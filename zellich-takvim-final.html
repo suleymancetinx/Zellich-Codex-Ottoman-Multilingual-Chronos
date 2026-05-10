@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>A. Zellich Fils — Takvim Yaprağı · 1911</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;700;900&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Armenian&family=Noto+Sans+Hebrew&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=UnifrakturMaguntia&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   RESET & KÖK DEĞİŞKENLER
+═══════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --paper:        #f0e8d0;
+  --paper2:       #e8dfc4;
+  --ink:          #0d0d0d;
+  --ink2:         #3a2e1a;
+  --line:         #0d0d0d;
+  --gold:         #7a6030;
+
+  /* ölçek değişkeni — JS ile güncellenir */
+  --s: 1;
+}
+
+/* ═══════════════════════════════════════════
+   BODY & ARKA PLAN
+═══════════════════════════════════════════ */
+body {
+  min-height: 100vh;
+  background: #3a3028;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 30% 40%, #2a2018 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 70%, #1e1810 0%, transparent 60%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(12px, 4vw, 40px) clamp(8px, 3vw, 20px);
+  font-family: 'IM Fell English', serif;
+}
+
+/* ═══════════════════════════════════════════
+   KAĞIT GÖLGE & WRAPPER
+═══════════════════════════════════════════ */
+.wrap {
+  position: relative;
+  width: min(500px, 100%);
+  animation: appear .6s ease both;
+}
+@keyframes appear {
+  from { opacity: 0; transform: translateY(14px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
+}
+.wrap::after {
+  content: '';
+  position: absolute;
+  inset: 10px -10px -12px 10px;
+  background: rgba(0,0,0,.5);
+  filter: blur(16px);
+  z-index: 0;
+  border-radius: 3px;
+}
+
+/* ═══════════════════════════════════════════
+   KAĞIT YAPRAĞI
+═══════════════════════════════════════════ */
+.leaf {
+  position: relative;
+  z-index: 1;
+  background-color: var(--paper);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeBlend in='SourceGraphic' mode='multiply'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E"),
+    linear-gradient(170deg, #f8f0d8 0%, #f0e8d0 50%, #e8dfc4 100%);
+  border: 1.5px solid #9a8a70;
+  color: var(--ink);
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 20px rgba(139,110,60,.13),
+    inset 0 0  5px rgba(0,0,0,.06);
+}
+
+/* iç çift çerçeve */
+.leaf > .inner-border {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(13,13,13,.18);
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* yaşlanma lekeleri */
+.stain {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* yatay ayraç çizgiler */
+.hr         { border: none; border-top: 1.5px solid var(--line); }
+.hr--thick  { border-top-width: 2.5px; }
+.hr--thin   { border-top-width: .75px; border-color: rgba(13,13,13,.3); }
+
+/* ═══════════════════════════════════════════
+   1. ÜST — Yıllar & Ay-Yıldız
+═══════════════════════════════════════════ */
+.top-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: clamp(5px,2vw,9px) 0 clamp(4px,1.5vw,7px);
+}
+
+/* Sol blok: Rumi yıl + ay üst üste, sola yasla */
+.top-rumi-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: clamp(10px, 3.5vw, 18px);
+  gap: 1px;
+}
+
+/* Sağ blok: Hicri yıl + ay üst üste, SAĞA yasla */
+.top-hijri-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;          /* sağa yasla */
+  padding-right: clamp(10px, 3.5vw, 18px);
+  gap: 1px;
+}
+/* Her iki yıl bloğu: ay-yıldıza yakın, kendi köşesine yaslanmış */
+.year-rumi {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: clamp(26px, 8.5vw, 40px);
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  direction: ltr;
+}
+.year-hijri {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: clamp(22px, 7vw, 33px);
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  direction: ltr;   /* ١٤٤٧ هـ soldan sağa: rakam önce, هـ sonra */
+}
+/* ر ve هـ → küçük, zarif, soluk */
+.year-suffix {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: clamp(12px, 3.5vw, 17px);  /* büyütüldü */
+  font-weight: 400;
+  color: var(--ink2);
+  opacity: .75;
+  line-height: 1;
+  align-self: flex-end;
+  margin-bottom: 3px;
+}
+.crescent-box {
+  padding: 0 clamp(4px, 2vw, 8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.crescent-box svg {
+  width:  clamp(40px, 12vw, 58px);
+  height: clamp(40px, 12vw, 58px);
+}
+
+/* top-months kaldırıldı — yıl+ay blokları top-header içinde */
+.month-rumi {
+  font-family: 'Amiri', serif;
+  font-size: clamp(20px, 6.5vw, 30px);  /* biraz büyütüldü */
+  font-weight: 700;
+  text-align: left;
+  direction: ltr;
+  line-height: 1.1;
+
+}
+.month-hijri {
+  font-family: 'Amiri', serif;
+  font-size: clamp(16px, 5.5vw, 26px);
+  font-weight: 700;
+  text-align: right;
+  direction: rtl;
+  line-height: 1.1;
+}
+
+/* ═══════════════════════════════════════════
+   2. DEV RAKAMLAR
+═══════════════════════════════════════════ */
+.big-numbers {
+  display: grid;
+  grid-template-columns: 1fr 2px 1fr;
+  border-top: 2.5px solid var(--line);
+  border-bottom: 2.5px solid var(--line);
+  background: var(--paper);
+}
+.big-num-divider { background: var(--line); }
+.big-num {
+  text-align: center;
+  padding: 2px clamp(4px,2vw,10px);
+}
+.big-num span {
+  font-family: 'Amiri', serif;
+  font-size: clamp(100px, 37vw, 195px);  /* ~%25 büyütme */
+  font-weight: 700;
+  display: block;
+  line-height: .80;
+  letter-spacing: -5px;
+}
+
+/* ═══════════════════════════════════════════
+   3. OSMANLI / HALK TAKVİMİ SATIRI
+═══════════════════════════════════════════ */
+.ottoman-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: clamp(4px,1.5vw,6px) clamp(8px,3vw,14px);
+  border-bottom: 1.5px solid var(--line);
+  gap: clamp(3px,1.5vw,6px);
+  background: linear-gradient(to bottom, #ede4ca, var(--paper));
+}
+
+/* Sol: Halk takvimi */
+.ott-left, .ott-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  min-width: clamp(60px, 19vw, 85px);
+}
+.ott-left  { align-items: flex-start; }
+.ott-right { align-items: flex-end;   }
+
+.halk-ar {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: clamp(12px, 4vw, 16px);
+  font-weight: 700;
+  direction: rtl;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.halk-tr {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(6px, 1.8vw, 7.5px);
+  font-style: italic;
+  color: var(--ink2);
+  line-height: 1.2;
+}
+.halk-gun {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: clamp(9px, 2.8vw, 11px);
+  color: var(--ink2);
+  line-height: 1.2;
+}
+
+/* Orta: gün adı */
+.ott-center { text-align: center; }
+.day-name-ottoman {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: clamp(18px, 5.8vw, 26px);   /* daha belirgin */
+  font-weight: 700;
+  display: block;
+  line-height: 1;
+  letter-spacing: .5px;
+}
+.ott-small {
+  font-family: 'Amiri', serif;
+  font-size: clamp(9px, 2.8vw, 12px);    /* biraz büyütüldü */
+  direction: rtl;
+  display: block;
+  color: var(--ink2);
+  margin-top: 2px;
+  letter-spacing: .3px;
+}
+
+/* Sağ: Vakt-i Zuhr */
+.vakit-ar {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: clamp(12px, 4vw, 16px);
+  font-weight: 700;
+  direction: rtl;
+  color: var(--ink);
+  line-height: 1.1;
+  text-align: right;
+}
+.vakit-tr {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(6px, 1.8vw, 7.5px);
+  font-style: italic;
+  color: var(--ink2);
+  text-align: right;
+  line-height: 1.2;
+}
+.vakit-saat {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11px, 3.2vw, 14px);
+  font-weight: 700;
+  color: var(--ink);
+  text-align: right;
+  line-height: 1.3;
+  letter-spacing: .5px;
+}
+
+/* ═══════════════════════════════════════════
+   4. BULGARCA / KİRİL ŞERİDİ
+═══════════════════════════════════════════ */
+.cyrillic-band {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 5 eşit sütun */
+  align-items: center;
+  padding: clamp(4px,1.2vw,6px) clamp(10px,3.5vw,20px);
+  border-bottom: 2px solid var(--line);
+  background: var(--paper2);
+}
+/* köşe rakamlar */
+.cyr-num {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12px, 3.8vw, 18px);
+  font-weight: 700;
+  text-align: center;
+}
+.cyr-num:first-child { text-align: left;  }
+.cyr-num:last-child  { text-align: right; }
+/* ay adı ve gün adı — ikinci ve dördüncü sütun */
+.cyr-text {
+  font-family: 'Noto Serif', serif;
+  font-size: clamp(11px, 3.3vw, 14px);
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: .3px;
+}
+/* YIL — tam orta (3. sütun) */
+.cyr-year {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(14px, 4.5vw, 21px);
+  font-weight: 900;
+  letter-spacing: .8px;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════
+   5. İKİ SÜTUN — Yunanca | Fransızca
+═══════════════════════════════════════════ */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 2px 1fr;
+  min-height: clamp(160px, 40vw, 210px);
+}
+.col-divider { background: var(--line); }
+.col {
+  padding: clamp(7px,2.5vw,10px) clamp(16px,5vw,22px);
+  position: relative;
+}
+
+/* Dikey yan yazılar */
+.rotated-left {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.rotated-left span {
+  display: block;
+  white-space: nowrap;
+  font-size: 6px;
+  font-style: italic;
+  color: var(--ink2);
+  opacity: .8;
+  transform: rotate(-90deg);
+  transform-origin: center center;
+  font-family: 'IM Fell English', serif;
+  letter-spacing: .3px;
+}
+.rotated-right {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.rotated-right span {
+  display: block;
+  white-space: nowrap;
+  font-size: 6px;
+  font-style: italic;
+  color: var(--ink2);
+  opacity: .8;
+  transform: rotate(90deg);
+  transform-origin: center center;
+  font-family: 'IM Fell English', serif;
+  letter-spacing: .3px;
+}
+
+/* Sütun içi elemanlar */
+.col-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12px, 3.8vw, 18px);
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 1px;
+}
+.col-number {
+  font-family: 'Amiri', serif;
+  font-size: clamp(55px, 18vw, 100px);
+  font-weight: 700;
+  text-align: center;
+  line-height: .85;
+  display: block;
+}
+.col-day-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(10px, 3vw, 15px);
+  font-weight: 700;
+  text-align: center;
+  display: block;
+  margin-top: 2px;
+}
+.col-saint {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(8px, 2.5vw, 11px);
+  text-align: center;
+  display: block;
+  margin-top: 2px;
+  font-style: italic;
+}
+.col-info {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(7.5px, 2.2vw, 9.5px);
+  line-height: 1.65;
+  margin-top: clamp(4px,1.5vw,6px);
+  color: var(--ink2);
+}
+.col-info span { display: block; }
+
+/* Yunanca ek notlar */
+.greek-note {
+  font-family: 'Noto Serif', serif;
+  font-size: clamp(8px, 2.4vw, 10px);
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 2px;
+  color: var(--ink2);
+}
+.greek-feast {
+  font-family: 'Noto Serif', serif;
+  font-size: clamp(9px, 2.8vw, 11px);
+  font-weight: 700;
+  text-align: center;
+  margin-top: 1px;
+}
+.greek-martyr {
+  font-family: 'Noto Serif', serif;
+  font-size: clamp(7px, 2.1vw, 9px);
+  font-style: italic;
+  text-align: center;
+  color: var(--ink2);
+}
+.vert-note {
+  display: block;
+  text-align: center;
+  font-size: clamp(6px, 1.8vw, 7.5px);
+  white-space: nowrap;
+  font-family: 'Noto Serif', serif;
+  color: var(--ink2);
+  font-style: italic;
+  margin-top: clamp(2px,1vw,4px);
+}
+
+/* ═══════════════════════════════════════════
+   6. ERMENİCE
+═══════════════════════════════════════════ */
+.armenian-row {
+  border-top: 1.5px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: clamp(4px,1.5vw,6px) clamp(10px,3vw,18px);
+  background: var(--paper2);
+}
+.arm-line1 {
+  font-family: 'Noto Sans Armenian', sans-serif;
+  font-size: clamp(9px, 2.8vw, 12px);
+  font-weight: 700;
+  display: block;
+  text-align: center;
+  letter-spacing: .3px;
+}
+.arm-line2 {
+  font-family: 'Noto Sans Armenian', sans-serif;
+  font-size: clamp(7.5px, 2.3vw, 10px);
+  display: block;
+  text-align: center;
+  color: var(--ink2);
+  margin-top: 1px;
+}
+
+/* ═══════════════════════════════════════════
+   7. İBRANİCE
+═══════════════════════════════════════════ */
+.hebrew-row {
+  border-top: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
+  padding: clamp(4px,1.5vw,6px) clamp(10px,3vw,18px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px,4vw,20px);
+  background: var(--paper);
+}
+.heb-num, .heb-month, .heb-year {
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  font-size: clamp(11px, 3.5vw, 15px);
+  direction: rtl;
+}
+.heb-num, .heb-year { font-weight: 700; }
+
+/* ═══════════════════════════════════════════
+   8. FOOTER
+═══════════════════════════════════════════ */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(4px,1.5vw,6px) clamp(8px,3vw,14px);
+  background: var(--paper2);
+  gap: 4px;
+}
+.foot-num {
+  font-family: 'Amiri', serif;
+  font-size: clamp(16px, 5vw, 22px);
+  font-weight: 700;
+  min-width: 28px;
+  line-height: 1;
+}
+.foot-center {
+  flex: 1;
+  text-align: center;
+}
+.foot-day-line {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(6px, 1.8vw, 8px);
+  font-weight: 700;
+  letter-spacing: .8px;
+  display: block;
+  margin-bottom: 2px;
+}
+.foot-firm {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(6px, 1.8vw, 7.5px);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: clamp(1px, .5vw, 2.4px);
+  text-transform: uppercase;
+  display: block;
+  color: var(--ink2);
+  opacity: .85;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<div class="leaf">
+  <div class="inner-border"></div>
+
+  <!-- Yaşlanma lekeleri -->
+  <div class="stain" style="width:85px;height:65px;background:radial-gradient(ellipse,rgba(139,100,40,.07) 0%,transparent 70%);top:18%;left:-6px;transform:rotate(-15deg)"></div>
+  <div class="stain" style="width:55px;height:55px;background:radial-gradient(ellipse,rgba(100,80,40,.05) 0%,transparent 70%);bottom:22%;right:-3px"></div>
+  <div class="stain" style="width:38px;height:28px;background:radial-gradient(ellipse,rgba(120,90,40,.06) 0%,transparent 70%);top:42%;left:8px"></div>
+
+  <!-- 1. ÜST: Yıllar & Ay-Yıldız ─────────────────── -->
+  <div class="top-header">
+
+    <!-- SOL: Rumi yıl + ay -->
+    <div class="top-rumi-block">
+      <div class="year-rumi">
+        <span id="year-rumi"></span><span class="year-suffix">ر</span>
+      </div>
+      <div class="month-rumi" id="month-rumi"></div>
+    </div>
+
+    <!-- ORTA: Ay-Yıldız -->
+    <div class="crescent-box">
+      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="23" cy="30" r="18" fill="var(--ink)"/>
+        <circle cx="31" cy="24" r="15" fill="var(--paper)"/>
+        <polygon points="46,10 48.5,18 57,18 50.5,23 53,31 46,26 39,31 41.5,23 35,18 43.5,18" fill="var(--ink)"/>
+      </svg>
+    </div>
+
+    <!-- SAĞ: Hicri yıl + ay -->
+    <div class="top-hijri-block">
+      <div class="year-hijri">
+        <span id="year-hijri"></span><span class="year-suffix">هـ</span>
+      </div>
+      <div class="month-hijri" id="month-hijri"></div>
+    </div>
+
+  </div>
+
+  <!-- 2. DEV RAKAMLAR ─────────────────────────────── -->
+  <div class="hr hr--thick"></div>
+  <div class="big-numbers">
+    <div class="big-num"><span id="rumi-day"></span></div>
+    <div class="big-num-divider"></div>
+    <div class="big-num"><span id="gregorian-day-num"></span></div>
+  </div>
+  <div class="hr hr--thick"></div>
+
+  <!-- 3. OSMANLI SATIRI ───────────────────────────── -->
+  <div class="ottoman-row">
+    <div class="ott-left">
+      <span class="halk-ar"  id="halk-ar"></span>
+      <span class="halk-tr"  id="halk-tr"></span>
+      <span class="halk-gun" id="halk-gun"></span>
+    </div>
+    <div class="ott-center">
+      <span class="day-name-ottoman" id="day-ottoman"></span>
+      <span class="ott-small"        id="ott-small"></span>
+    </div>
+    <div class="ott-right">
+      <span class="vakit-ar"   id="vakit-ar">وقت ظهر</span>
+      <span class="vakit-tr"   id="vakit-tr">Vakt-i Zuhr · İst.</span>
+      <span class="vakit-saat" id="vakit-saat"></span>
+    </div>
+  </div>
+
+  <!-- 4. BULGARCA / KİRİL ─────────────────────────── -->
+  <div class="cyrillic-band">
+    <span class="cyr-num"  id="cyr-num-l"></span>
+    <span class="cyr-text" id="cyr-month"></span>
+    <span class="cyr-year" id="cyr-year"></span>
+    <span class="cyr-text" id="cyr-dayname"></span>
+    <span class="cyr-num"  id="cyr-num-r"></span>
+  </div>
+
+  <!-- 5. İKİ SÜTUN ───────────────────────────────── -->
+  <div class="two-col">
+
+    <!-- SOL: Yunanca (Jülyen) -->
+    <div class="col">
+      <div class="rotated-left"><span id="rot-left"></span></div>
+      <span class="col-title"   id="greek-month-name"></span>
+      <span class="col-number"  id="julian-day-num"></span>
+      <div class="greek-note"   id="greek-note"></div>
+      <div class="greek-feast"  id="greek-feast"></div>
+      <div class="greek-martyr" id="greek-martyr"></div>
+      <span class="vert-note"   id="vert-note"></span>
+    </div>
+
+    <div class="col-divider"></div>
+
+    <!-- SAĞ: Fransızca (Miladi) -->
+    <div class="col">
+      <div class="rotated-right"><span id="rot-right"></span></div>
+      <span class="col-title"    id="fr-month-name"></span>
+      <span class="col-number"   id="fr-day-num"></span>
+      <span class="col-day-name" id="fr-day-name"></span>
+      <span class="col-saint"    id="fr-saint"></span>
+      <div class="col-info">
+        <span>Lever du Soleil: <b id="sunrise"></b></span>
+        <span>Coucher &nbsp;&nbsp;&nbsp;&nbsp; » <b id="sunset"></b></span>
+        <span>12 h. à la Turque: <b id="noon"></b></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. ERMENİCE ────────────────────────────────── -->
+  <div class="armenian-row">
+    <span class="arm-line1" id="armenian-line1"></span>
+    <span class="arm-line2" id="armenian-line2"></span>
+  </div>
+
+  <!-- 7. İBRANİCE ────────────────────────────────── -->
+  <div class="hebrew-row">
+    <span class="heb-num"   id="heb-day"></span>
+    <span class="heb-month" id="heb-month"></span>
+    <span class="heb-year"  id="heb-year"></span>
+  </div>
+
+  <!-- 8. FOOTER ──────────────────────────────────── -->
+  <div class="footer">
+    <span class="foot-num" id="foot-num-l"></span>
+    <div class="foot-center">
+      <span class="foot-day-line">
+        <span id="foot-day-of-year"></span> — <span id="foot-days-left"></span>
+      </span>
+      <span class="foot-firm">DÉPOSÉ — SÜLEYMAN ÇETİN — CONSTANTINOPLE</span>
+    </div>
+    <span class="foot-num" id="foot-num-r"></span>
+  </div>
+
+</div><!-- .leaf -->
+</div><!-- .wrap -->
+
+<script>
+// ═══════════════════════════════════════════════
+// YARDIMCILAR
+// ═══════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+
+// Batı rakamlarını Doğu Arap rakamlarına çevir
+function toE(n) {
+  return String(n).replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+}
+
+// ═══════════════════════════════════════════════
+// HİCRİ TARİH
+// ═══════════════════════════════════════════════
+function hijriParts(date) {
+  try {
+    return {
+      y: new Intl.DateTimeFormat('ar', { calendar:'islamic', year:'numeric'  }).format(date),
+      m: new Intl.DateTimeFormat('ar', { calendar:'islamic', month:'long'    }).format(date),
+      d: new Intl.DateTimeFormat('ar', { calendar:'islamic', day:'numeric'   }).format(date),
+    };
+  } catch(e) {
+    return { y: '١٤٤٧', m: 'ذو القعدة', d: '١٢' };
+  }
+}
+
+// ═══════════════════════════════════════════════
+// İBRANİCE TARİH
+// ═══════════════════════════════════════════════
+function hebrewParts(date) {
+  try {
+    return {
+      d: new Intl.DateTimeFormat('he', { calendar:'hebrew', day:'numeric'  }).format(date),
+      m: new Intl.DateTimeFormat('he', { calendar:'hebrew', month:'long'   }).format(date),
+      y: new Intl.DateTimeFormat('en', { calendar:'hebrew', year:'numeric' }).format(date),
+    };
+  } catch(e) {
+    return { d: 'יב', m: 'אייר', y: '5786' };
+  }
+}
+
+// ═══════════════════════════════════════════════
+// RUMİ / JÜLYEN TARİH
+// Miladi'den 13 gün çıkar → Jülyen tarihi
+// Rumi yıl = Miladi yıl - 584 (sabit formül)
+// ═══════════════════════════════════════════════
+const RUMI_MONTHS_AR = [
+  'كانون الثاني','شباط','آذار','نيسان','أيار','حزيران',
+  'تموز','آب','أيلول','تشرين الأول','تشرين الثاني','كانون الأول'
+];
+const RUMI_MONTHS_TR = [
+  'Kanun-ı Sani','Şubat','Mart','Nisan','Mayıs','Haziran',
+  'Temmuz','Ağustos','Eylül','Teşrin-i Evvel','Teşrin-i Sani','Kanun-ı Evvel'
+];
+
+function rumiDate(date) {
+  const jul = new Date(date.getTime() - 13 * 864e5);
+  return {
+    day:      jul.getDate(),
+    monthAr:  RUMI_MONTHS_AR[jul.getMonth()],
+    monthTr:  RUMI_MONTHS_TR[jul.getMonth()],
+    julDate:  jul,
+  };
+}
+
+// ═══════════════════════════════════════════════
+// HALK TAKVİMİ — Ruz-ı Hızır / Ruz-ı Kasım
+// 6 Mayıs–7 Kasım  → Ruz-ı Hızır  (روز خضر)
+// 8 Kasım–5 Mayıs  → Ruz-ı Kasım  (روز قاسم)
+// ═══════════════════════════════════════════════
+function halkTakvimi(date) {
+  const y            = date.getFullYear();
+  const hizirBas     = new Date(y, 4,  6);   // 6  Mayıs
+  const hizirBit     = new Date(y, 10, 7);   // 7  Kasım
+  const kasimBas     = new Date(y, 10, 8);   // 8  Kasım
+
+  if (date >= hizirBas && date <= hizirBit) {
+    const gun = Math.floor((date - hizirBas) / 864e5) + 1;
+    return { baslik: 'Ruz-ı Hızır', baslikAr: 'روز خضر', gecenGun: gun };
+  } else {
+    const bas = (date >= kasimBas) ? kasimBas : new Date(y - 1, 10, 8);
+    const gun = Math.floor((date - bas) / 864e5) + 1;
+    return { baslik: 'Ruz-ı Kasım', baslikAr: 'روز قاسم', gecenGun: gun };
+  }
+}
+
+// ═══════════════════════════════════════════════
+// ÖĞLE NAMAZI VAKTİ — Jean Meeus astronomik
+// İstanbul: 41.01°K, 28.97°D, UTC+3
+// ═══════════════════════════════════════════════
+function ogleVakti(date) {
+  const JD  = Math.floor(date.getTime() / 86400000) + 2440587.5 + 0.5;
+  const n   = JD - 2451545.0;
+  const L0  = (280.46646 + 0.9856474  * n) % 360;
+  const M   = ((357.52911 + 0.98560028 * n) % 360) * Math.PI / 180;
+  const y_  = Math.pow(Math.tan((23.4393 * Math.PI / 180) / 2), 2);
+  const L0r = L0 * Math.PI / 180;
+  const EqT = y_  * Math.sin(2 * L0r)
+            - 2   * 0.01671 * Math.sin(M)
+            + 4   * 0.01671 * y_ * Math.sin(M) * Math.cos(2 * L0r)
+            - 0.5 * y_ * y_ * Math.sin(4 * L0r)
+            - 1.25 * 0.01671 * 0.01671 * Math.sin(2 * M);
+  const EqT_min   = EqT * 4 * 180 / Math.PI;
+  const transitUTC = 12 - 28.97 / 15 - EqT_min / 60;
+  const localH     = transitUTC + 3;           // UTC+3
+  const totalMin   = Math.round(localH * 60);
+  return {
+    hh: Math.floor(totalMin / 60) % 24,
+    mm: totalMin % 60,
+  };
+}
+
+// ═══════════════════════════════════════════════
+// GÜN / AY ADLARI
+// ═══════════════════════════════════════════════
+const DAYS = {
+  ott: ['يكشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'],
+  tr:  ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'],
+  fr:  ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+  el:  ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'],
+  bg:  ['Неделя','Понеделник','Вторник','Сряда','Четвъртък','Петък','Събота'],
+};
+const MONTHS_FR = [
+  'Janvier','Février','Mars','Avril','Mai','Juin',
+  'Juillet','Août','Septembre','Octobre','Novembre','Décembre'
+];
+const MONTHS_EL = [
+  'ΙΑΝΟΥΑΡΙΟΣ','ΦΕΒΡΟΥΑΡΙΟΣ','ΜΑΡΤΙΟΣ','ΑΠΡΙΛΙΟΣ','ΜΑΙΟΣ','ΙΟΥΝΙΟΣ',
+  'ΙΟΥΛΙΟΣ','ΑΥΓΟΥΣΤΟΣ','ΣΕΠΤΕΜΒΡΙΟΣ','ΟΚΤΩΒΡΙΟΣ','ΝΟΕΜΒΡΙΟΣ','ΔΕΚΕΜΒΡΙΟΣ'
+];
+const MONTHS_EL_GEN = [
+  'Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου',
+  'Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου'
+];
+const MONTHS_BG = [
+  'Януарий','Февруарий','Мартий','Априлий','Майий','Юний',
+  'Юлий','Августий','Септемврий','Октомврий','Ноемврий','Декемврий'
+];
+const ARM_MONTHS = [
+  'Հունվար','Փետրվար','Մարտ','Ապրիլ','Մայիս','Հունիս',
+  'Հուլիս','Օգոստոս','Սեպտեմբեր','Հոկտեմբեր','Նոյեմբեր','Դեկտեմբեր'
+];
+const ARM_DAYS = [
+  'Կիրակի','Երկուշաբ.','Երեքշաբ.','Չորեքշաբ.','Հինգշաբ.','Ուրբաթ','Շաբաթ'
+];
+const SAINTS_FR = [
+  'Saint Basile','Sainte Geneviève','Saint Blaise','Saint Gilbert','Saint Agapit',
+  'Saint Gaston','Saint Remi','Saint Thaddée','Saint Apollinaire','Saint Agathe',
+  'Sainte Luce','Sainte Eulalie','Saint Valentin','Saint Valens','Saint Faustin',
+  'Sainte Julienne','Saint Polycarpe','Saint Siméon','Saint Gabin','Saint Eleuthère',
+  'Sainte Agnès','Sainte Isabelle','Saint Damase','Sainte Aldegonde','Saint Mathias',
+  'Saint Nestor','Sainte Honorine','Saint Oswald','Saint Auguste','Saint Benjamin',
+  'Saint Benoit'
+];
+
+// ═══════════════════════════════════════════════
+// GÜNEŞ BİLGİSİ (İstanbul astronomik)
+// ═══════════════════════════════════════════════
+function sunTimes(date) {
+  const LAT = 41.01 * Math.PI / 180;
+  const LNG = 28.97;
+  const JD  = Math.floor(date.getTime() / 86400000) + 2440587.5 + 0.5;
+  const n   = JD - 2451545.0;
+  const L0  = (280.46646 + 0.9856474  * n) % 360;
+  const M   = ((357.52911 + 0.98560028 * n) % 360) * Math.PI / 180;
+  const C   = 1.9146 * Math.sin(M) + 0.02000 * Math.sin(2 * M);
+  const sunLon = (L0 + C) * Math.PI / 180;
+  const eps = 23.4393 * Math.PI / 180;
+  const decl = Math.asin(Math.sin(eps) * Math.sin(sunLon));
+  // Gün doğumu/batımı saat açısı (h0 = -0.833°)
+  const h0  = -0.833 * Math.PI / 180;
+  const cosH = (Math.sin(h0) - Math.sin(LAT) * Math.sin(decl))
+             / (Math.cos(LAT) * Math.cos(decl));
+  if (Math.abs(cosH) > 1) return { rise: '--:--', set: '--:--' };
+  const H  = Math.acos(cosH) * 180 / Math.PI;
+  const y_ = Math.pow(Math.tan(23.4393 * Math.PI / 180 / 2), 2);
+  const L0r = L0 * Math.PI / 180;
+  const EqT = (y_ * Math.sin(2*L0r) - 2*0.01671*Math.sin(M)
+              + 4*0.01671*y_*Math.sin(M)*Math.cos(2*L0r)
+              - 0.5*y_*y_*Math.sin(4*L0r)
+              - 1.25*0.01671*0.01671*Math.sin(2*M)) * 4 * 180 / Math.PI;
+  const noon = 12 - LNG / 15 - EqT / 60 + 3;
+  const fmt = h => {
+    const t = Math.round(h * 60);
+    return `${Math.floor(t/60) % 24}.${String(t % 60).padStart(2,'0')}`;
+  };
+  return { rise: fmt(noon - H / 15), set: fmt(noon + H / 15) };
+}
+
+// ═══════════════════════════════════════════════
+// ANA DOLDURMA
+// ═══════════════════════════════════════════════
+function fill() {
+  const now = new Date(2026, 4, 10);   // 10 Mayıs 2026
+  const dow = now.getDay();            // 0 = Pazar
+  const d   = now.getDate();           // 10
+  const m   = now.getMonth();          // 4
+  const y   = now.getFullYear();       // 2026
+
+  const hij  = hijriParts(now);
+  const rumi = rumiDate(now);
+  const heb  = hebrewParts(now);
+  const julDay = rumi.julDate.getDate();
+  const julMon = rumi.julDate.getMonth();
+
+  // ── ÜST: Yıllar ──────────────────────────────
+  $('year-rumi').textContent  = toE(y - 584);    // ١٤٤٢
+  // Hicri yıl: Intl çıktısından sadece rakamları al, toE() ile garantile
+  const hijYilSayisal = new Intl.DateTimeFormat('en', { calendar:'islamic', year:'numeric' }).format(now);
+  $('year-hijri').textContent = toE(parseInt(hijYilSayisal));  // ١٤٤٧
+
+  $('month-rumi').textContent  = rumi.monthAr;   // أيار
+  $('month-hijri').textContent = hij.m;           // ذو القعدة
+
+  // ── DEV RAKAMLAR ─────────────────────────────
+  $('rumi-day').textContent         = toE(julDay);  // ٢٧
+  $('gregorian-day-num').textContent = toE(d);       // ١٠
+
+  // ── OSMANLI SATIRI ────────────────────────────
+  $('day-ottoman').textContent = DAYS.tr[dow];   // Pazar
+  $('ott-small').textContent   = DAYS.ott[dow] + ' · ' + toE(julDay) + ' · ' + toE(d);
+
+  // Halk Takvimi
+  const ht      = halkTakvimi(now);
+  const donemAd = ht.baslik === 'Ruz-ı Hızır' ? "Hızır'ın" : "Kasım'ın";
+  $('halk-ar').textContent  = ht.baslikAr;
+  $('halk-tr').textContent  = '(' + ht.baslik + ')';
+  $('halk-gun').textContent = donemAd + ' ' + ht.gecenGun + '. günü';
+
+  // Vakt-i Zuhr
+  const og   = ogleVakti(now);
+  const ogAr = toE(og.hh) + ' · ' + toE(String(og.mm).padStart(2, '0'));
+  $('vakit-ar').textContent   = 'وقت ظهر';
+  $('vakit-tr').textContent   = 'Vakt-i Zuhr · İst.';
+  $('vakit-saat').textContent = ogAr;
+
+  // ── BULGARCA ─────────────────────────────────
+  $('cyr-num-l').textContent  = d;
+  $('cyr-month').textContent  = MONTHS_BG[m];      // Майий
+  $('cyr-year').textContent   = y;
+  $('cyr-dayname').textContent = DAYS.bg[dow];     // Неделя
+  $('cyr-num-r').textContent  = d;
+
+  // ── YUNANCA (Jülyen) ─────────────────────────
+  $('greek-month-name').textContent = MONTHS_EL[julMon];
+  $('julian-day-num').textContent   = julDay;
+  $('greek-note').textContent       = '\u02BCH \u039a\u03c5\u03c1\u03b9\u03b1\u03ba\u03ae \u03c4\u03bf\u1FE6';
+  $('greek-feast').textContent      = DAYS.el[dow];
+  $('greek-martyr').textContent     = MONTHS_EL_GEN[julMon] + ' ' + y;
+  $('rot-left').textContent         = 'Μεσ. Τουρκιτ ' + julDay + '.' + (julMon + 1);
+  $('vert-note').textContent        = '\u0395\u03a4\u03a9.T\u03b9t \u03ba\u03c4\u03c7. ' + julDay;
+
+  // ── FRANSIZCA (Miladi) ───────────────────────
+  $('fr-month-name').textContent = MONTHS_FR[m].toUpperCase();
+  $('fr-day-num').textContent    = d;
+  $('fr-day-name').textContent   = DAYS.fr[dow];
+  $('fr-saint').textContent      = SAINTS_FR[(d - 1) % SAINTS_FR.length];
+  $('rot-right').textContent     = 'Midi \xe0 la Turq. ' + d + '.' + (m + 1);
+
+  // Güneş bilgisi
+  const sun = sunTimes(now);
+  $('sunrise').textContent = sun.rise;
+  $('sunset').textContent  = sun.set;
+  $('noon').textContent    = og.hh + '.' + String(og.mm).padStart(2, '0');
+
+  // ── ERMENİCE ─────────────────────────────────
+  $('armenian-line1').textContent = ARM_MONTHS[m].toUpperCase() + ' \u2013 ' + ARM_DAYS[dow];
+  $('armenian-line2').textContent = julDay + ' ' + ARM_MONTHS[julMon] + ' ' + y;
+
+  // ── İBRANİCE ─────────────────────────────────
+  $('heb-day').textContent   = heb.d;
+  $('heb-month').textContent = heb.m;
+  $('heb-year').textContent  = heb.y;
+
+  // ── FOOTER ───────────────────────────────────
+  const startOfYear = new Date(y, 0, 1);
+  const dayOfYear   = Math.round((now - startOfYear) / 864e5) + 1;
+  const endOfYear   = new Date(y, 11, 31);
+  const daysLeft    = Math.round((endOfYear - now) / 864e5);
+  $('foot-num-l').textContent      = dayOfYear;
+  $('foot-num-r').textContent      = daysLeft;
+  $('foot-day-of-year').textContent = dayOfYear + '. Gün';
+  $('foot-days-left').textContent   = daysLeft + ' Gün Kaldı';
+}
+
+fill();
+</script>
+</body>
+</html>
