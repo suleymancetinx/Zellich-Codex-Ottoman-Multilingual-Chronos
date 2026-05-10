@@ -2,6 +2,12 @@
   <img src="https://readme-typing-svg.herokuapp.com/?font=Playfair+Display&weight=700&size=35&center=true&vCenter=true&width=600&height=80&color=BC6C25&lines=Zellich+Codex;Ottoman+Multilingual+Chronos;Digitalizing+Print+Heritage" alt="Zellich Codex Greeting">
 </div>
 
+<div align="center">
+  <a href="https://suleymancetinx.github.io/Zellich-Codex-Ottoman-Multilingual-Chronos/" target="_blank">
+    <img alt="Live Demo" src="https://img.shields.io/badge/Canli_Deneyim-Goster-BC6C25?style=for-the-badge&logo=google-chrome&logoColor=white">
+  </a>
+</div>
+
 # 📅 Zellich Codex: Dijital Zellich Takvimi (Zellich Calendar Digitalization)
 
 Bu çalışma, 19. yüzyıl İstanbul'unun estetik ve kozmopolit mirasını, matbaacılık sanatının öncü ismi **Zellich Ailesi**'nin gözünden dijital dünyaya taşımaktadır.
@@ -41,11 +47,11 @@ Zamanın parçalı yapısını estetik bir bütünlükle sunan dijital Zellich y
 
 > "Kültürel miras, sadece müzelerde saklanan değil, kod satırlarıyla yeniden hayat bulan bir değerdir."
 
-**Geliştirici:** Süleyman
+**Geliştirici:** Süleyman Çetin
 
 ---
 
-## 
+## 🎨 
 ```text
         _____       _                                
        / ____|     | |                               
