@@ -8,13 +8,15 @@ Bu çalışma, 19. yüzyıl İstanbul'unun estetik ve kozmopolit mirasını, mat
 
 ---
 
-## 📖 Bir Mirasın Anatomisi: Zellich Ailesi
-Zellich ailesi, 19. yüzyılda İstanbul'a yerleşerek Osmanlı İmparatorluğu'nda grafik sanatlarının öncüsü olmuştur. Antonio Zellich tarafından kurulan **"A. Zellich Fils"** matbaası, bugün koleksiyonerlerin nadide parçalarından olan "saatli maarif" tarzı çok dilli takvimlerin mimarıdır. Zellichler, imparatorluğun kozmopolit yapısını tek bir kağıt üzerinde birleştiren vizyoner tasarımcılardır.
+## 📖 Bir Mirasın Anatomisi: Zellich Ailesi ve 1869'dan Günümüze
+Zellich ailesi, 1840'ta Dalmaçya'dan İstanbul'a yerleşerek Osmanlı İmparatorluğu'nda grafik sanatlarının öncüsü olmuştur. Antonio Zellich tarafından **1869** yılında kurulan **"A. Zellich Fils"** matbaası, bugün koleksiyonerlerin nadide parçalarından olan "saatli maarif" tarzı çok dilli takvimlerin mimarıdır. 
+
+Zellichler, sadece birer matbaacı değil; imparatorluğun kozmopolit yapısını, farklı inanç ve zaman algılarını tek bir kağıt üzerinde birleştiren vizyoner tasarımcılardır. Bu proje, matbaanın en olgun eserlerini verdiği 1900'lerin başındaki takvim yapraklarını temel almaktadır.
 
 ## 💡 Projenin Fikri ve Amacı
-Bu proje, 1911 yılına ait orijinal bir Zellich takvim yaprağının günümüz verileriyle dijital olarak yeniden hayat bulmasıdır.
+Bu proje, kökeni 19. yüzyıla dayanan orijinal bir Zellich takvim yaprağının günümüz verileriyle dijital olarak yeniden hayat bulmasıdır.
 
-**Neden Çok Dilli?** Osmanlı'nın son dönemindeki sosyal yapıda; Müslüman, Rum, Ermeni, Yahudi ve Levanten toplumların kendi zaman algılarını ve özel günlerini tek bir ortak düzlemde takip edebilmelerini sağlamak amacıyla tasarlanmıştır.
+**Neden Çok Dilli?** Osmanlı'nın son dönemindeki sosyal yapıda; Müslüman, Rum, Ermeni, Yahudi ve Levanten toplumların kendi zaman algılarını (Hicri, Rumi, Miladi) tek bir ortak düzlemde takip edebilmelerini sağlamak amacıyla tasarlanmıştır.
 
 ---
 
@@ -31,7 +33,7 @@ Zamanın parçalı yapısını estetik bir bütünlükle sunan dijital Zellich y
 ---
 
 ## 🚀 Teknolojik Mimari
-- **Frontend:** HTML5 ve yoğun CSS3 (1900'lerin matbaa estetiği ve kağıt dokusu üzerine kurgulandı).
+- **Frontend:** HTML5 ve yoğun CSS3 (19. yüzyıl matbaa estetiği ve kağıt dokusu üzerine kurgulandı).
 - **Engine:** Vanilla JavaScript (ES6+) ile tarihsel zaman senkronizasyonu.
 - **Erişilebilirlik:** Modern UX standartları ile tarihi dokunun harmanlanması.
 
