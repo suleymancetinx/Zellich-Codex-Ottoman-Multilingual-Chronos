@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>A. Zellich Fils — Takvim Yaprağı · 1911</title>
+<title>A. Zellich Fils — Takvim Yaprağı</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;700;900&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Armenian&family=Noto+Sans+Hebrew&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=UnifrakturMaguntia&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 /* ═══════════════════════════════════════════
-   RESET & KÖK DEĞİŞKENLER
+   RESET & KÖK DEĞİŞKENLER (Süleyman Çetin kodladı sence hatalı yer var mı kral?
 ═══════════════════════════════════════════ */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -263,24 +266,30 @@ body {
   line-height: 1.2;
 }
 
-/* Orta: gün adı */
+/* Orta: Miladi tarih + Celali */
 .ott-center { text-align: center; }
-.day-name-ottoman {
-  font-family: 'Scheherazade New', 'Amiri', serif;
-  font-size: clamp(18px, 5.8vw, 26px);   /* daha belirgin */
+
+/* "12 Mayıs  Salı" — büyük, belirgin */
+.ott-miladi {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(14px, 4.5vw, 20px);
   font-weight: 700;
   display: block;
-  line-height: 1;
+  line-height: 1.2;
   letter-spacing: .5px;
+  color: var(--ink);
 }
-.ott-small {
-  font-family: 'Amiri', serif;
-  font-size: clamp(9px, 2.8vw, 12px);    /* biraz büyütüldü */
+
+/* Celali / Hicri Şemsi — Farsça, altında */
+.ott-celali {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: clamp(11px, 3.5vw, 15px);
+  font-weight: 700;
   direction: rtl;
   display: block;
   color: var(--ink2);
-  margin-top: 2px;
-  letter-spacing: .3px;
+  margin-top: 3px;
+  line-height: 1.3;
 }
 
 /* Sağ: Vakt-i Zuhr */
@@ -620,7 +629,7 @@ body {
   <div class="big-numbers">
     <div class="big-num"><span id="rumi-day"></span></div>
     <div class="big-num-divider"></div>
-    <div class="big-num"><span id="gregorian-day-num"></span></div>
+    <div class="big-num"><span id="hijri-day-num"></span></div>
   </div>
   <div class="hr hr--thick"></div>
 
@@ -632,8 +641,10 @@ body {
       <span class="halk-gun" id="halk-gun"></span>
     </div>
     <div class="ott-center">
-      <span class="day-name-ottoman" id="day-ottoman"></span>
-      <span class="ott-small"        id="ott-small"></span>
+      <!-- Miladi: "12 Mayıs  Salı" -->
+      <span class="ott-miladi" id="ott-miladi"></span>
+      <!-- Celali / Hicri Şemsi -->
+      <span class="ott-celali" id="ott-celali"></span>
     </div>
     <div class="ott-right">
       <span class="vakit-ar"   id="vakit-ar">وقت ظهر</span>
@@ -716,24 +727,45 @@ body {
 // ═══════════════════════════════════════════════
 const $ = id => document.getElementById(id);
 
-// Batı rakamlarını Doğu Arap rakamlarına çevir
+// Batı → Doğu Arap rakamı
 function toE(n) {
   return String(n).replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 }
 
 // ═══════════════════════════════════════════════
 // HİCRİ TARİH
+// Intl islamic astronomikal hesap, Suudi Ümmü'l-Kurâ'dan
+// genellikle 1 gün geri kalır → +1 gün offset uygula
 // ═══════════════════════════════════════════════
 function hijriParts(date) {
-  try {
-    return {
-      y: new Intl.DateTimeFormat('ar', { calendar:'islamic', year:'numeric'  }).format(date),
-      m: new Intl.DateTimeFormat('ar', { calendar:'islamic', month:'long'    }).format(date),
-      d: new Intl.DateTimeFormat('ar', { calendar:'islamic', day:'numeric'   }).format(date),
-    };
-  } catch(e) {
-    return { y: '١٤٤٧', m: 'ذو القعدة', d: '١٢' };
-  }
+  // Tamamen bağımsız algoritma — Intl kullanmaz
+  // Kuwaiti algoritması, offset yok
+  const JD = Math.floor(date.getTime() / 86400000) + 2440588;
+
+  // JD → Hicri (Kuwaiti algoritması)
+  const l  = JD - 1948440 + 10632;
+  const n  = Math.floor((l - 1) / 10631);
+  const l2 = l - 10631 * n + 354;
+  const j  = Math.floor((10985 - l2) / 5316) * Math.floor((50 * l2) / 17719)
+           + Math.floor(l2 / 5670) * Math.floor((43 * l2) / 15238);
+  const l3 = l2 - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50)
+           - Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29;
+  const hMonth = Math.floor((24 * l3) / 709);
+  const hDay   = l3 - Math.floor((709 * hMonth) / 24);
+  const hYear  = 30 * n + j - 30;
+
+  const MONTHS_AR = [
+    'مُحَرَّم','صَفَر','رَبِيع الأَوَّل','رَبِيع الثَّانِي',
+    'جُمَادَى الأُولَى','جُمَادَى الآخِرَة','رَجَب','شَعْبَان',
+    'رَمَضَان','شَوَّال','ذو القعدة','ذو الحجة'
+  ];
+
+  return {
+    yNum: hYear,
+    y:    toE(hYear),
+    m:    MONTHS_AR[hMonth - 1] || 'ذو القعدة',
+    d:    toE(hDay),
+  };
 }
 
 // ═══════════════════════════════════════════════
@@ -741,10 +773,12 @@ function hijriParts(date) {
 // ═══════════════════════════════════════════════
 function hebrewParts(date) {
   try {
+    const heFmt = f => new Intl.DateTimeFormat('he',  { calendar:'hebrew', ...f }).format(date);
+    const enFmt = f => new Intl.DateTimeFormat('en',  { calendar:'hebrew', ...f }).format(date);
     return {
-      d: new Intl.DateTimeFormat('he', { calendar:'hebrew', day:'numeric'  }).format(date),
-      m: new Intl.DateTimeFormat('he', { calendar:'hebrew', month:'long'   }).format(date),
-      y: new Intl.DateTimeFormat('en', { calendar:'hebrew', year:'numeric' }).format(date),
+      d: heFmt({ day:'numeric'  }),
+      m: heFmt({ month:'long'   }),
+      y: enFmt({ year:'numeric' }),
     };
   } catch(e) {
     return { d: 'יב', m: 'אייר', y: '5786' };
@@ -752,9 +786,8 @@ function hebrewParts(date) {
 }
 
 // ═══════════════════════════════════════════════
-// RUMİ / JÜLYEN TARİH
-// Miladi'den 13 gün çıkar → Jülyen tarihi
-// Rumi yıl = Miladi yıl - 584 (sabit formül)
+// RUMİ / JÜLYEN TARİH  (Miladi − 13 gün)
+// Rumi yıl = Miladi yıl − 584
 // ═══════════════════════════════════════════════
 const RUMI_MONTHS_AR = [
   'كانون الثاني','شباط','آذار','نيسان','أيار','حزيران',
@@ -764,67 +797,148 @@ const RUMI_MONTHS_TR = [
   'Kanun-ı Sani','Şubat','Mart','Nisan','Mayıs','Haziran',
   'Temmuz','Ağustos','Eylül','Teşrin-i Evvel','Teşrin-i Sani','Kanun-ı Evvel'
 ];
-
 function rumiDate(date) {
   const jul = new Date(date.getTime() - 13 * 864e5);
-  return {
-    day:      jul.getDate(),
-    monthAr:  RUMI_MONTHS_AR[jul.getMonth()],
-    monthTr:  RUMI_MONTHS_TR[jul.getMonth()],
-    julDate:  jul,
-  };
+  return { day: jul.getDate(), monthAr: RUMI_MONTHS_AR[jul.getMonth()], julDate: jul };
 }
 
 // ═══════════════════════════════════════════════
 // HALK TAKVİMİ — Ruz-ı Hızır / Ruz-ı Kasım
-// 6 Mayıs–7 Kasım  → Ruz-ı Hızır  (روز خضر)
-// 8 Kasım–5 Mayıs  → Ruz-ı Kasım  (روز قاسم)
 // ═══════════════════════════════════════════════
 function halkTakvimi(date) {
-  const y            = date.getFullYear();
-  const hizirBas     = new Date(y, 4,  6);   // 6  Mayıs
-  const hizirBit     = new Date(y, 10, 7);   // 7  Kasım
-  const kasimBas     = new Date(y, 10, 8);   // 8  Kasım
-
+  const y         = date.getFullYear();
+  const hizirBas  = new Date(y, 4,  6);
+  const hizirBit  = new Date(y, 10, 7);
+  const kasimBas  = new Date(y, 10, 8);
   if (date >= hizirBas && date <= hizirBit) {
-    const gun = Math.floor((date - hizirBas) / 864e5) + 1;
-    return { baslik: 'Ruz-ı Hızır', baslikAr: 'روز خضر', gecenGun: gun };
-  } else {
-    const bas = (date >= kasimBas) ? kasimBas : new Date(y - 1, 10, 8);
-    const gun = Math.floor((date - bas) / 864e5) + 1;
-    return { baslik: 'Ruz-ı Kasım', baslikAr: 'روز قاسم', gecenGun: gun };
+    return { baslik:'Ruz-ı Hızır', baslikAr:'روز خضر',
+             gecenGun: Math.floor((date - hizirBas) / 864e5) + 1 };
   }
+  const bas = date >= kasimBas ? kasimBas : new Date(y - 1, 10, 8);
+  return { baslik:'Ruz-ı Kasım', baslikAr:'روز قاسم',
+           gecenGun: Math.floor((date - bas) / 864e5) + 1 };
 }
 
 // ═══════════════════════════════════════════════
-// ÖĞLE NAMAZI VAKTİ — Jean Meeus astronomik
-// İstanbul: 41.01°K, 28.97°D, UTC+3
+// ÖĞLE NAMAZI VAKTİ — Jean Meeus / İstanbul UTC+3
 // ═══════════════════════════════════════════════
 function ogleVakti(date) {
   const JD  = Math.floor(date.getTime() / 86400000) + 2440587.5 + 0.5;
   const n   = JD - 2451545.0;
   const L0  = (280.46646 + 0.9856474  * n) % 360;
   const M   = ((357.52911 + 0.98560028 * n) % 360) * Math.PI / 180;
-  const y_  = Math.pow(Math.tan((23.4393 * Math.PI / 180) / 2), 2);
+  const y_  = Math.pow(Math.tan(23.4393 * Math.PI / 360), 2);
   const L0r = L0 * Math.PI / 180;
-  const EqT = y_  * Math.sin(2 * L0r)
-            - 2   * 0.01671 * Math.sin(M)
-            + 4   * 0.01671 * y_ * Math.sin(M) * Math.cos(2 * L0r)
-            - 0.5 * y_ * y_ * Math.sin(4 * L0r)
-            - 1.25 * 0.01671 * 0.01671 * Math.sin(2 * M);
-  const EqT_min   = EqT * 4 * 180 / Math.PI;
-  const transitUTC = 12 - 28.97 / 15 - EqT_min / 60;
-  const localH     = transitUTC + 3;           // UTC+3
-  const totalMin   = Math.round(localH * 60);
-  return {
-    hh: Math.floor(totalMin / 60) % 24,
-    mm: totalMin % 60,
-  };
+  const EqT = (y_ * Math.sin(2*L0r) - 2*0.01671*Math.sin(M)
+              + 4*0.01671*y_*Math.sin(M)*Math.cos(2*L0r)
+              - 0.5*y_*y_*Math.sin(4*L0r)
+              - 1.25*0.01671*0.01671*Math.sin(2*M)) * 4 * 180 / Math.PI;
+  const localH   = 12 - 28.97 / 15 - EqT / 60 + 3;
+  const totalMin = Math.round(localH * 60);
+  return { hh: Math.floor(totalMin / 60) % 24, mm: totalMin % 60 };
+}
+
+// ═══════════════════════════════════════════════
+// GÜNEŞ DOĞUŞ/BATIŞ — İstanbul
+// ═══════════════════════════════════════════════
+function sunTimes(date) {
+  const LAT = 41.01 * Math.PI / 180, LNG = 28.97;
+  const JD  = Math.floor(date.getTime() / 86400000) + 2440587.5 + 0.5;
+  const n   = JD - 2451545.0;
+  const L0  = (280.46646 + 0.9856474  * n) % 360;
+  const M   = ((357.52911 + 0.98560028 * n) % 360) * Math.PI / 180;
+  const C   = 1.9146 * Math.sin(M) + 0.02 * Math.sin(2*M);
+  const sunLon = (L0 + C) * Math.PI / 180;
+  const eps  = 23.4393 * Math.PI / 180;
+  const decl = Math.asin(Math.sin(eps) * Math.sin(sunLon));
+  const h0   = -0.833 * Math.PI / 180;
+  const cosH = (Math.sin(h0) - Math.sin(LAT)*Math.sin(decl)) / (Math.cos(LAT)*Math.cos(decl));
+  if (Math.abs(cosH) > 1) return { rise:'--:--', set:'--:--' };
+  const H    = Math.acos(cosH) * 180 / Math.PI;
+  const y_   = Math.pow(Math.tan(eps/2), 2);
+  const L0r  = L0 * Math.PI / 180;
+  const EqT  = (y_*Math.sin(2*L0r) - 2*0.01671*Math.sin(M)
+               + 4*0.01671*y_*Math.sin(M)*Math.cos(2*L0r)
+               - 0.5*y_*y_*Math.sin(4*L0r)
+               - 1.25*0.01671*0.01671*Math.sin(2*M)) * 4 * 180 / Math.PI;
+  const noon = 12 - LNG/15 - EqT/60 + 3;
+  const fmt  = h => { const t = Math.round(h*60); return `${Math.floor(t/60)%24}.${String(t%60).padStart(2,'0')}`; };
+  return { rise: fmt(noon - H/15), set: fmt(noon + H/15) };
 }
 
 // ═══════════════════════════════════════════════
 // GÜN / AY ADLARI
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// CELALİ / HİCRİ ŞEMSİ (İran Güneş Takvimi)
+// Algoritmik dönüşüm — Birashk yöntemi
+// ═══════════════════════════════════════════════
+function celaliTakvimi(date) {
+  const y = date.getFullYear();
+  const m = date.getMonth() + 1;
+  const d = date.getDate();
+
+  // Gregoryen → Julian Day
+  const a  = Math.floor((14 - m) / 12);
+  const Y  = y + 4800 - a;
+  const M  = m + 12 * a - 3;
+  const JD = d + Math.floor((153 * M + 2) / 5) + 365 * Y
+           + Math.floor(Y / 4) - Math.floor(Y / 100)
+           + Math.floor(Y / 400) - 32045;
+
+  // JD → Celali (Jalali / Hicri Şemsi)
+  const JDC = JD - 1948320;       // Celali epoch farkı (1 Farvardin 475 HŞ)
+  const n475 = Math.floor((JDC - 1) / 1029983) + (JDC % 1029983 !== 0 ? 0 : -1);
+  const drem = JDC - n475 * 1029983;
+  let ycyc;
+  if (drem === 1029983) {
+    ycyc = 2820;
+  } else {
+    const aux1 = Math.floor(drem / 366);
+    const aux2 = drem % 366;
+    ycyc = Math.floor((2134 * aux1 + 2816 * aux2 + 2815) / 1028522) + aux1 + 1;
+  }
+  const jYear = ycyc + 2820 * n475 + 474;
+
+  // Yıl içindeki gün
+  const jYearStart = JD - celaliJD(jYear, 1, 1) + 1;
+  // Ay ve gün
+  let jMonth, jDay;
+  if (jYearStart <= 186) {
+    jMonth = Math.ceil(jYearStart / 31);
+    jDay   = jYearStart - (jMonth - 1) * 31;
+  } else {
+    const rem = jYearStart - 186;
+    jMonth = Math.ceil(rem / 30) + 6;
+    jDay   = rem - (jMonth - 7) * 30;
+  }
+
+  const MONTHS_FA = [
+    'فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور',
+    'مهر','آبان','آذر','دی','بهمن','اسفند'
+  ];
+
+  return {
+    day:   jDay,
+    month: MONTHS_FA[jMonth - 1] || '',
+    year:  jYear,
+    dayE:  toE(jDay),
+    yearE: toE(jYear),
+  };
+}
+
+// Celali tarihini JD'ye çevir (iç yardımcı)
+function celaliJD(y, m, d) {
+  const epbase = y - (y >= 0 ? 474 : 473);
+  const epyear = 474 + ((epbase % 2820) + 2820) % 2820;
+  return d
+    + (m <= 7 ? (m - 1) * 31 : (m - 1) * 30 + 6)
+    + Math.floor((epyear * 682 - 110) / 2816)
+    + (epyear - 1) * 365
+    + Math.floor(epbase / 2820) * 1029983
+    + 1948319;
+}
+
 const DAYS = {
   ott: ['يكشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'],
   tr:  ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'],
@@ -832,82 +946,25 @@ const DAYS = {
   el:  ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'],
   bg:  ['Неделя','Понеделник','Вторник','Сряда','Четвъртък','Петък','Събота'],
 };
-const MONTHS_FR = [
-  'Janvier','Février','Mars','Avril','Mai','Juin',
-  'Juillet','Août','Septembre','Octobre','Novembre','Décembre'
-];
-const MONTHS_EL = [
-  'ΙΑΝΟΥΑΡΙΟΣ','ΦΕΒΡΟΥΑΡΙΟΣ','ΜΑΡΤΙΟΣ','ΑΠΡΙΛΙΟΣ','ΜΑΙΟΣ','ΙΟΥΝΙΟΣ',
-  'ΙΟΥΛΙΟΣ','ΑΥΓΟΥΣΤΟΣ','ΣΕΠΤΕΜΒΡΙΟΣ','ΟΚΤΩΒΡΙΟΣ','ΝΟΕΜΒΡΙΟΣ','ΔΕΚΕΜΒΡΙΟΣ'
-];
-const MONTHS_EL_GEN = [
-  'Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου',
-  'Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου'
-];
-const MONTHS_BG = [
-  'Януарий','Февруарий','Мартий','Априлий','Майий','Юний',
-  'Юлий','Августий','Септемврий','Октомврий','Ноемврий','Декемврий'
-];
-const ARM_MONTHS = [
-  'Հունվար','Փետրվար','Մարտ','Ապրիլ','Մայիս','Հունիս',
-  'Հուլիս','Օգոստոս','Սեպտեմբեր','Հոկտեմբեր','Նոյեմբեր','Դեկտեմբեր'
-];
-const ARM_DAYS = [
-  'Կիրակի','Երկուշաբ.','Երեքշաբ.','Չորեքշաբ.','Հինգշաբ.','Ուրբաթ','Շաբաթ'
-];
-const SAINTS_FR = [
-  'Saint Basile','Sainte Geneviève','Saint Blaise','Saint Gilbert','Saint Agapit',
-  'Saint Gaston','Saint Remi','Saint Thaddée','Saint Apollinaire','Saint Agathe',
-  'Sainte Luce','Sainte Eulalie','Saint Valentin','Saint Valens','Saint Faustin',
-  'Sainte Julienne','Saint Polycarpe','Saint Siméon','Saint Gabin','Saint Eleuthère',
-  'Sainte Agnès','Sainte Isabelle','Saint Damase','Sainte Aldegonde','Saint Mathias',
-  'Saint Nestor','Sainte Honorine','Saint Oswald','Saint Auguste','Saint Benjamin',
-  'Saint Benoit'
-];
+const MONTHS_FR  = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const MONTHS_EL  = ['ΙΑΝΟΥΑΡΙΟΣ','ΦΕΒΡΟΥΑΡΙΟΣ','ΜΑΡΤΙΟΣ','ΑΠΡΙΛΙΟΣ','ΜΑΙΟΣ','ΙΟΥΝΙΟΣ','ΙΟΥΛΙΟΣ','ΑΥΓΟΥΣΤΟΣ','ΣΕΠΤΕΜΒΡΙΟΣ','ΟΚΤΩΒΡΙΟΣ','ΝΟΕΜΒΡΙΟΣ','ΔΕΚΕΜΒΡΙΟΣ'];
+const MONTHS_ELG = ['Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου','Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου'];
+const MONTHS_BG  = ['Януарий','Февруарий','Мартий','Априлий','Майий','Юний','Юлий','Августий','Септемврий','Октомврий','Ноемврий','Декемврий'];
+const ARM_MONTHS = ['Հունվար','Փետրվար','Մարտ','Ապրիլ','Մայիս','Հունիս','Հուլիս','Օգոստոս','Սեպտեմբեր','Հոկտեմբեր','Նոյեմբեր','Դեկտեմբեր'];
+const ARM_DAYS   = ['Կիրակի','Երկուշաբ.','Երեքշաբ.','Չորեքշաբ.','Հինգշաբ.','Ուրբաթ','Շաբաթ'];
+const SAINTS_FR  = ['Saint Basile','Sainte Geneviève','Saint Blaise','Saint Gilbert','Saint Agapit','Saint Gaston','Saint Remi','Saint Thaddée','Saint Apollinaire','Saint Agathe','Sainte Luce','Sainte Eulalie','Saint Valentin','Saint Valens','Saint Faustin','Sainte Julienne','Saint Polycarpe','Saint Siméon','Saint Gabin','Saint Eleuthère','Sainte Agnès','Sainte Isabelle','Saint Damase','Sainte Aldegonde','Saint Mathias','Saint Nestor','Sainte Honorine','Saint Oswald','Saint Auguste','Saint Benjamin','Saint Benoit'];
 
 // ═══════════════════════════════════════════════
-// GÜNEŞ BİLGİSİ (İstanbul astronomik)
-// ═══════════════════════════════════════════════
-function sunTimes(date) {
-  const LAT = 41.01 * Math.PI / 180;
-  const LNG = 28.97;
-  const JD  = Math.floor(date.getTime() / 86400000) + 2440587.5 + 0.5;
-  const n   = JD - 2451545.0;
-  const L0  = (280.46646 + 0.9856474  * n) % 360;
-  const M   = ((357.52911 + 0.98560028 * n) % 360) * Math.PI / 180;
-  const C   = 1.9146 * Math.sin(M) + 0.02000 * Math.sin(2 * M);
-  const sunLon = (L0 + C) * Math.PI / 180;
-  const eps = 23.4393 * Math.PI / 180;
-  const decl = Math.asin(Math.sin(eps) * Math.sin(sunLon));
-  // Gün doğumu/batımı saat açısı (h0 = -0.833°)
-  const h0  = -0.833 * Math.PI / 180;
-  const cosH = (Math.sin(h0) - Math.sin(LAT) * Math.sin(decl))
-             / (Math.cos(LAT) * Math.cos(decl));
-  if (Math.abs(cosH) > 1) return { rise: '--:--', set: '--:--' };
-  const H  = Math.acos(cosH) * 180 / Math.PI;
-  const y_ = Math.pow(Math.tan(23.4393 * Math.PI / 180 / 2), 2);
-  const L0r = L0 * Math.PI / 180;
-  const EqT = (y_ * Math.sin(2*L0r) - 2*0.01671*Math.sin(M)
-              + 4*0.01671*y_*Math.sin(M)*Math.cos(2*L0r)
-              - 0.5*y_*y_*Math.sin(4*L0r)
-              - 1.25*0.01671*0.01671*Math.sin(2*M)) * 4 * 180 / Math.PI;
-  const noon = 12 - LNG / 15 - EqT / 60 + 3;
-  const fmt = h => {
-    const t = Math.round(h * 60);
-    return `${Math.floor(t/60) % 24}.${String(t % 60).padStart(2,'0')}`;
-  };
-  return { rise: fmt(noon - H / 15), set: fmt(noon + H / 15) };
-}
-
-// ═══════════════════════════════════════════════
-// ANA DOLDURMA
+// ANA DOLDURMA — her açılışta çalışır
 // ═══════════════════════════════════════════════
 function fill() {
-  const now = new Date(2026, 4, 10);   // 10 Mayıs 2026
-  const dow = now.getDay();            // 0 = Pazar
-  const d   = now.getDate();           // 10
-  const m   = now.getMonth();          // 4
-  const y   = now.getFullYear();       // 2026
+  // Lokal (tarayıcı) tarihi kullan — UTC değil
+  const _now = new Date();
+  const now  = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate(), 12, 0, 0);
+  const dow = now.getDay();
+  const d   = now.getDate();
+  const m   = now.getMonth();
+  const y   = now.getFullYear();
 
   const hij  = hijriParts(now);
   const rumi = rumiDate(now);
@@ -915,22 +972,25 @@ function fill() {
   const julDay = rumi.julDate.getDate();
   const julMon = rumi.julDate.getMonth();
 
-  // ── ÜST: Yıllar ──────────────────────────────
-  $('year-rumi').textContent  = toE(y - 584);    // ١٤٤٢
-  // Hicri yıl: Intl çıktısından sadece rakamları al, toE() ile garantile
-  const hijYilSayisal = new Intl.DateTimeFormat('en', { calendar:'islamic', year:'numeric' }).format(now);
-  $('year-hijri').textContent = toE(parseInt(hijYilSayisal));  // ١٤٤٧
+  // ── ÜST: Hicri yıl ──
+  $('year-rumi').textContent   = toE(y - 584);
+  $('year-hijri').textContent  = toE(hij.yNum);    // rakam garantili Arap
 
-  $('month-rumi').textContent  = rumi.monthAr;   // أيار
-  $('month-hijri').textContent = hij.m;           // ذو القعدة
+  // ── Ay isimleri ──
+  $('month-rumi').textContent  = rumi.monthAr;
+  $('month-hijri').textContent = hij.m;
 
-  // ── DEV RAKAMLAR ─────────────────────────────
-  $('rumi-day').textContent         = toE(julDay);  // ٢٧
-  $('gregorian-day-num').textContent = toE(d);       // ١٠
+  // ── DEV RAKAMLAR ──
+  $('rumi-day').textContent          = toE(julDay);
+  $('hijri-day-num').textContent = hij.d;   // Hicri gün (٢٥)
 
-  // ── OSMANLI SATIRI ────────────────────────────
-  $('day-ottoman').textContent = DAYS.tr[dow];   // Pazar
-  $('ott-small').textContent   = DAYS.ott[dow] + ' · ' + toE(julDay) + ' · ' + toE(d);
+  // ── OSMANLI SATIRI — Miladi + Celali ──
+  const MONTHS_TR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran',
+                     'Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  $('ott-miladi').textContent = d + ' ' + MONTHS_TR[m] + '  ' + DAYS.tr[dow];
+
+  const cel = celaliTakvimi(now);
+  $('ott-celali').textContent = cel.dayE + ' ' + cel.month + ' ' + cel.yearE;
 
   // Halk Takvimi
   const ht      = halkTakvimi(now);
@@ -940,59 +1000,56 @@ function fill() {
   $('halk-gun').textContent = donemAd + ' ' + ht.gecenGun + '. günü';
 
   // Vakt-i Zuhr
-  const og   = ogleVakti(now);
-  const ogAr = toE(og.hh) + ' · ' + toE(String(og.mm).padStart(2, '0'));
-  $('vakit-ar').textContent   = 'وقت ظهر';
-  $('vakit-tr').textContent   = 'Vakt-i Zuhr · İst.';
-  $('vakit-saat').textContent = ogAr;
+  const og = ogleVakti(now);
+  $('vakit-ar').textContent   = '\u0648\u0642\u062a \u0638\u0647\u0631';
+  $('vakit-tr').textContent   = 'Vakt-i Zuhr \u00b7 \u0130st.';
+  $('vakit-saat').textContent = toE(og.hh) + ' \u00b7 ' + toE(String(og.mm).padStart(2,'0'));
 
-  // ── BULGARCA ─────────────────────────────────
-  $('cyr-num-l').textContent  = d;
-  $('cyr-month').textContent  = MONTHS_BG[m];      // Майий
-  $('cyr-year').textContent   = y;
-  $('cyr-dayname').textContent = DAYS.bg[dow];     // Неделя
-  $('cyr-num-r').textContent  = d;
+  // ── BULGARCA ──
+  $('cyr-num-l').textContent   = d;
+  $('cyr-month').textContent   = MONTHS_BG[m];
+  $('cyr-year').textContent    = y;
+  $('cyr-dayname').textContent = DAYS.bg[dow];
+  $('cyr-num-r').textContent   = d;
 
-  // ── YUNANCA (Jülyen) ─────────────────────────
+  // ── YUNANCA (Jülyen) ──
   $('greek-month-name').textContent = MONTHS_EL[julMon];
   $('julian-day-num').textContent   = julDay;
-  $('greek-note').textContent       = '\u02BCH \u039a\u03c5\u03c1\u03b9\u03b1\u03ba\u03ae \u03c4\u03bf\u1FE6';
+  $('greek-note').textContent       = '\u02bch \u039a\u03c5\u03c1\u03b9\u03b1\u03ba\u03ae \u03c4\u03bf\u1fe6';
   $('greek-feast').textContent      = DAYS.el[dow];
-  $('greek-martyr').textContent     = MONTHS_EL_GEN[julMon] + ' ' + y;
-  $('rot-left').textContent         = 'Μεσ. Τουρκιτ ' + julDay + '.' + (julMon + 1);
-  $('vert-note').textContent        = '\u0395\u03a4\u03a9.T\u03b9t \u03ba\u03c4\u03c7. ' + julDay;
+  $('greek-martyr').textContent     = MONTHS_ELG[julMon] + ' ' + y;
+  $('rot-left').textContent         = 'M\u03b5\u03c3. \u03a4\u03bf\u03c5\u03c1\u03ba\u03b9\u03c4 ' + julDay + '.' + (julMon+1);
+  $('vert-note').textContent        = '\u0395\u03a4\u03a9.Tit \u03ba\u03c4\u03c7. ' + julDay;
 
-  // ── FRANSIZCA (Miladi) ───────────────────────
+  // ── FRANSIZCA (Miladi) ──
   $('fr-month-name').textContent = MONTHS_FR[m].toUpperCase();
   $('fr-day-num').textContent    = d;
   $('fr-day-name').textContent   = DAYS.fr[dow];
   $('fr-saint').textContent      = SAINTS_FR[(d - 1) % SAINTS_FR.length];
-  $('rot-right').textContent     = 'Midi \xe0 la Turq. ' + d + '.' + (m + 1);
+  $('rot-right').textContent     = 'Midi \xe0 la Turq. ' + d + '.' + (m+1);
 
-  // Güneş bilgisi
   const sun = sunTimes(now);
   $('sunrise').textContent = sun.rise;
   $('sunset').textContent  = sun.set;
-  $('noon').textContent    = og.hh + '.' + String(og.mm).padStart(2, '0');
+  $('noon').textContent    = og.hh + '.' + String(og.mm).padStart(2,'0');
 
-  // ── ERMENİCE ─────────────────────────────────
+  // ── ERMENİCE ──
   $('armenian-line1').textContent = ARM_MONTHS[m].toUpperCase() + ' \u2013 ' + ARM_DAYS[dow];
   $('armenian-line2').textContent = julDay + ' ' + ARM_MONTHS[julMon] + ' ' + y;
 
-  // ── İBRANİCE ─────────────────────────────────
+  // ── İBRANİCE ──
   $('heb-day').textContent   = heb.d;
   $('heb-month').textContent = heb.m;
   $('heb-year').textContent  = heb.y;
 
-  // ── FOOTER ───────────────────────────────────
+  // ── FOOTER ──
   const startOfYear = new Date(y, 0, 1);
   const dayOfYear   = Math.round((now - startOfYear) / 864e5) + 1;
-  const endOfYear   = new Date(y, 11, 31);
-  const daysLeft    = Math.round((endOfYear - now) / 864e5);
+  const daysLeft    = Math.round((new Date(y, 11, 31) - now) / 864e5);
   $('foot-num-l').textContent      = dayOfYear;
   $('foot-num-r').textContent      = daysLeft;
-  $('foot-day-of-year').textContent = dayOfYear + '. Gün';
-  $('foot-days-left').textContent   = daysLeft + ' Gün Kaldı';
+  $('foot-day-of-year').textContent = dayOfYear + '. G\xfcn';
+  $('foot-days-left').textContent   = daysLeft + ' G\xfcn Kald\u0131';
 }
 
 fill();
